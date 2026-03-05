@@ -117,7 +117,7 @@
       padding:18px;
     }
 
-    /* ✅ Section headings in Deakin colour */
+    /* Section headings in Deakin colour */
     .card h2, .card h3{
       color: var(--dk-teal-dark);
     }
@@ -149,7 +149,10 @@
       gap:10px;
       flex-wrap:wrap;
       justify-content:flex-end;
-      margin: 0 0 10px 0;
+      margin: 0 0 6px 0;
+    }
+    @media (max-width: 760px){
+      .button-row{justify-content:flex-start;}
     }
 
     label{
@@ -166,7 +169,6 @@
     }
     @media (max-width: 760px){
       .fields{grid-template-columns:1fr;}
-      .button-row{justify-content:flex-start;}
     }
 
     input[type="text"], input[type="date"], textarea{
@@ -320,16 +322,19 @@
     <div class="grid">
       <!-- Main form -->
       <section class="card" aria-label="Worksheet">
-        <!-- ✅ Buttons moved to the top of the form (all together) -->
+        <!-- Buttons at top (all together) -->
         <div class="button-row" role="group" aria-label="Worksheet actions">
           <button class="btn btn-danger" id="resetBtn" type="button">Reset</button>
           <button class="btn btn-primary" id="exportBtn" type="button">Export to Word</button>
           <a class="btn btn-ghost" href="javascript:window.print()" title="Print / Save as PDF">Print / Save as PDF</a>
         </div>
 
-        <h2>What you’re producing</h2>
+        <!-- No-save reminder near buttons -->
+        <p class="prompt tiny" style="margin:0 0 12px 0;">
+          This page doesn’t save your work. Export to Word before you close it.
+        </p>
 
-        <!-- ✅ “What you’re producing” instructions in light grey box -->
+        <h2>What you’re producing</h2>
         <div class="greybox">
           <p class="prompt small" style="margin:0;">
             Bring a usable draft to class: <strong>8+ stakeholders</strong> for one small business and
@@ -345,7 +350,7 @@
         <div class="fields">
           <div>
             <label for="studentName">Student name (optional)</label>
-            <input id="studentName" type="text" placeholder="e.g., Alex Nguyen" />
+            <input id="studentName" type="text" placeholder="Alex Nguyen" />
           </div>
           <div>
             <label for="workDate">Date</label>
@@ -356,17 +361,17 @@
         <div class="fields" style="margin-top:10px;">
           <div>
             <label for="bizName">Business name</label>
-            <input id="bizName" type="text" placeholder="e.g., your chosen business" />
+            <input id="bizName" type="text" placeholder="Your chosen business" />
           </div>
           <div>
             <label for="bizServes">Who it serves</label>
-            <input id="bizServes" type="text" placeholder="e.g., who the customers are / where they are" />
+            <input id="bizServes" type="text" placeholder="Who the customers are / where they are" />
           </div>
         </div>
 
         <div style="margin-top:10px;">
           <label for="bizSells">What it sells (1 sentence)</label>
-          <input id="bizSells" type="text" placeholder="e.g., product/service offer in one sentence" />
+          <input id="bizSells" type="text" placeholder="Product/service offer in one sentence" />
         </div>
 
         <div class="divider"></div>
@@ -385,9 +390,9 @@
           <table id="stakeTable">
             <thead>
               <tr>
-                <th style="width:22%;">Stakeholder</th>
-                <th style="width:35%;">What they want / care about</th>
-                <th style="width:35%;">One tension / risk / trade-off</th>
+                <th style="width:26%;">Stakeholder</th>
+                <th style="width:33%;">What they want / care about</th>
+                <th style="width:33%;">One tension / risk / trade-off</th>
                 <th style="width:8%; text-align:right;">Action</th>
               </tr>
             </thead>
@@ -398,12 +403,9 @@
         <div class="divider"></div>
 
         <h3>Step 3 — Your key tension (the one you’ll discuss in class)</h3>
-
-        <!-- ✅ Step 3 prompt changed to a worked example -->
         <p class="prompt small" style="margin:6px 0 8px 0;">
           Example tension (trade-off): “We want to keep prices low for customers, but rising supplier costs mean we may need to increase prices or reduce quality.”
         </p>
-
         <textarea id="keyTension" placeholder="Write your tension here as a clear trade-off…"></textarea>
 
         <div class="divider"></div>
@@ -436,20 +438,20 @@
   </main>
 
   <script>
-    // ---------- Setup ----------
-    // ✅ Unique stakeholder prompts per starter row (helps students think broadly)
-    const STAKEHOLDER_SUGGESTIONS = [
+    // Starter stakeholders are pre-filled so they export as part of the template (students can edit/replace)
+    const STAKEHOLDER_STARTERS = [
       "Customers",
       "Employees / staff",
       "Suppliers",
       "Owner / founder",
-      "Regulators / compliance bodies",
-      "Local community / neighbours",
-      "Finance providers (bank, lender, investor)",
-      "Partners / platforms / distributors"
+      "Regulators",
+      "Community / neighbours",
+      "Finance providers",
+      "Partners / platforms",
+      "Competitors"
     ];
 
-    const MIN_TEMPLATE_ROWS = 8; // Export pads to at least this many rows
+    const MIN_TEMPLATE_ROWS = 8; // Export pads to at least this many rows (if rows are deleted)
     const $ = (id) => document.getElementById(id);
 
     function safeText(v){ return (v ?? "").toString().trim(); }
@@ -463,14 +465,13 @@
         .replaceAll("'","&#039;");
     }
 
-    // ---------- Table rows ----------
-    function makeRow({ stakeholder="", wants="", tension="", stakeholderPlaceholder="" } = {}){
+    function makeRow({ stakeholder="", wants="", tension="", stakeholderPlaceholder="Edit if needed" } = {}){
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td class="cell-input">
           <input type="text"
                  value="${escapeHtml(stakeholder)}"
-                 placeholder="e.g., ${escapeHtml(stakeholderPlaceholder || "Stakeholder")}"
+                 placeholder="${escapeHtml(stakeholderPlaceholder)}"
                  data-field="stakeholder" />
         </td>
         <td class="cell-input">
@@ -498,8 +499,9 @@
     function renderStarterRows(){
       const tbody = $("stakeTbody");
       tbody.innerHTML = "";
-      STAKEHOLDER_SUGGESTIONS.forEach((sugg) => {
-        tbody.appendChild(makeRow({ stakeholder:"", wants:"", tension:"", stakeholderPlaceholder: sugg }));
+      STAKEHOLDER_STARTERS.forEach((starter) => {
+        // Pre-fill stakeholder value so it exports (and students can edit)
+        tbody.appendChild(makeRow({ stakeholder: starter, wants:"", tension:"", stakeholderPlaceholder: "Edit if needed" }));
       });
       updateBadges();
     }
@@ -509,7 +511,6 @@
       updateBadges();
     }
 
-    // ---------- Collect ----------
     function collectData(){
       const rows = [];
       $("stakeTbody").querySelectorAll("tr").forEach(tr => {
@@ -535,7 +536,6 @@
       };
     }
 
-    // ---------- Progress badges ----------
     function updateBadges(){
       const data = collectData();
       const count = (data.stakeholderRows || []).filter(r => safeText(r.stakeholder).length > 0).length;
@@ -560,7 +560,6 @@
       }
     }
 
-    // ---------- Reset ----------
     function resetAll(){
       if(!confirm("Reset this worksheet? This clears everything on the page.")) return;
       $("studentName").value = "";
@@ -629,7 +628,7 @@
       URL.revokeObjectURL(url);
     }
 
-    // ---------- Fallback export (.doc HTML) — exports FULL template ----------
+    // Fallback export (.doc HTML) — exports FULL template
     function exportAsDocHtml(data){
       const esc = (s) => String(s ?? "")
         .replaceAll("&","&amp;")
@@ -706,7 +705,7 @@
       downloadBlob(blob, `MMM760_W1_Template1_StakeholderMap_${safeBiz}.doc`);
     }
 
-    // ---------- Primary export (.docx) — exports FULL template + keeps writing space ----------
+    // Primary export (.docx) — exports FULL template + keeps writing space
     async function exportAsDocx(data){
       const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
               Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle, HeightRule } = window.docx;
@@ -879,7 +878,7 @@
       }
     }
 
-    // ---------- Init ----------
+    // Init
     window.addEventListener("DOMContentLoaded", () => {
       const d = new Date();
       $("workDate").value = d.toISOString().slice(0,10);
