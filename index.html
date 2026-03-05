@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MMM760 | Week 1 | Template 1 — Stakeholder map</title>
 
-  <!-- DOCX export libraries (client-side) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-
   <style>
     :root{
       /* Deakin-ish palette (teal-led, clean neutrals) */
@@ -152,7 +148,6 @@
       font-size:1.02rem;
     }
 
-    .muted{color:var(--dk-muted)}
     .small{font-size:0.92rem}
     .tiny{font-size:0.82rem; color:var(--dk-muted)}
 
@@ -327,13 +322,12 @@
       font-style: italic;
     }
 
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:0.85rem;
-      padding:2px 6px;
-      border:1px solid var(--dk-border);
-      border-radius:8px;
+    .notice{
       background:#fff;
+      border:1px solid var(--dk-border);
+      border-left:6px solid var(--dk-teal);
+      border-radius:14px;
+      padding:12px 12px;
     }
   </style>
 </head>
@@ -354,15 +348,11 @@
 
   <main class="wrap">
     <div class="grid">
-      <!-- Main form -->
       <section class="card" aria-label="Worksheet">
         <h2>What you’re producing</h2>
         <p class="prompt small" style="margin-bottom:6px;">
           A usable draft you can bring to seminar: <strong>8+ stakeholders</strong> for one small business and
           <strong>one key tension</strong> (trade-off) to discuss.
-        </p>
-        <p class="prompt tiny" style="margin-top:0;">
-          In seminar you’ll refine this with your group and strengthen it (add a missing stakeholder and sharpen your tension).
         </p>
 
         <div class="divider"></div>
@@ -440,68 +430,45 @@
           What’s one thing you want clarified in class?
         </p>
         <textarea id="seminarQuestion" placeholder="One question I want answered in seminar is…"></textarea>
-
-        <div class="divider"></div>
-
-        <h3>Quick self-check</h3>
-        <p class="prompt small">
-          Before you export: do you have <strong>8+ stakeholders</strong>, and does your tension read like a true trade-off?
-        </p>
-
       </section>
 
-      <!-- Right column -->
       <aside class="right-stack">
         <section class="card" aria-label="Progress">
           <h2 style="margin-bottom:6px;">Progress</h2>
           <div id="stakeCountBadge" class="badge warn">Stakeholders: 0 (need 8+)</div>
           <div id="tensionBadge" class="badge warn">Key tension: not yet added</div>
-          <p class="prompt tiny" style="margin:10px 0 0 0;">
-            This page does not save drafts. Export to Word before you close it.
-          </p>
         </section>
 
-        <section class="card" aria-label="Tips">
-          <h2 style="margin-bottom:6px;">Tips (keep it simple)</h2>
-          <ul class="prompt small" style="margin:0; padding-left:18px;">
-            <li>Be specific: name the real pressure (time/cash/people) and who feels it.</li>
-            <li>Sharpen vague tensions into a trade-off: “lower prices vs quality”, “new sales vs margin”.</li>
-            <li>If unsure, write <span class="kbd">unknown</span> and what you would check.</li>
-          </ul>
-        </section>
-
-        <section class="card" aria-label="Support">
-          <h2 style="margin-bottom:6px;">If your browser blocks downloads</h2>
-          <p class="prompt small" style="margin:0;">
-            Use <strong>Print / Save as PDF</strong> in the top bar as a fallback.
-          </p>
+        <section class="card" aria-label="Export help">
+          <h2 style="margin-bottom:6px;">If Export to Word doesn’t download</h2>
+          <div class="notice">
+            <p class="prompt small" style="margin:0;">
+              If you are viewing this worksheet inside an embedded LMS page, downloads may be blocked.
+              Open the worksheet in a <strong>new tab</strong> and export again.
+            </p>
+          </div>
         </section>
       </aside>
     </div>
   </main>
 
-  <!-- Sticky footer: Reset + Export only -->
   <footer class="sticky-footer">
     <div class="sticky-inner">
       <div class="footer-left">
-        <span class="hint">Drafts aren’t saved here. Export to Word before you close.</span>
+        <span class="hint">Export to Word before you close this page.</span>
       </div>
       <div class="footer-right">
         <button class="btn btn-danger" id="resetBtn" type="button">Reset</button>
-        <button class="btn btn-primary" id="exportBtn" type="button">Export to Word (.docx)</button>
+        <button class="btn btn-primary" id="exportBtn" type="button">Export to Word</button>
       </div>
     </div>
   </footer>
 
   <script>
-    // Start with 8 blank rows (students must write their own project stakeholders)
     const START_ROWS = 8;
     const $ = (id) => document.getElementById(id);
 
-    function safeText(v){
-      return (v ?? "").toString().trim();
-    }
-
+    function safeText(v){ return (v ?? "").toString().trim(); }
     function escapeHtml(str){
       return String(str ?? "")
         .replaceAll("&","&amp;")
@@ -509,6 +476,9 @@
         .replaceAll(">","&gt;")
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
+    }
+    function inIframe(){
+      try { return window.self !== window.top; } catch(e){ return true; }
     }
 
     function makeRow({ stakeholder="", wants="", tension="" } = {}){
@@ -535,19 +505,14 @@
         updateBadges();
       });
 
-      tr.querySelectorAll("input, textarea").forEach(el => {
-        el.addEventListener("input", updateBadges);
-      });
-
+      tr.querySelectorAll("input, textarea").forEach(el => el.addEventListener("input", updateBadges));
       return tr;
     }
 
     function renderStartRows(){
       const tbody = $("stakeTbody");
       tbody.innerHTML = "";
-      for(let i=0;i<START_ROWS;i++){
-        tbody.appendChild(makeRow({}));
-      }
+      for(let i=0;i<START_ROWS;i++) tbody.appendChild(makeRow({}));
       updateBadges();
     }
 
@@ -619,13 +584,138 @@
       renderStartRows();
     }
 
-    async function exportToWord(){
-      if(!window.docx){
-        alert("DOCX export library did not load. Please use Print / Save as PDF as a fallback.");
-        return;
+    // ---------- Robust library loading ----------
+    function loadScript(src){
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    async function ensureExportLibs(){
+      const docxOK = () => !!(window.docx && window.docx.Document && window.docx.Packer);
+      const saverOK = () => !!window.saveAs;
+
+      // Try multiple CDNs for docx
+      if(!docxOK()){
+        const docxUrls = [
+          "https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js",
+          "https://unpkg.com/docx@8.5.0/build/index.umd.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/index.umd.min.js"
+        ];
+        for(const url of docxUrls){
+          try { await loadScript(url); if(docxOK()) break; } catch(e) {}
+        }
       }
 
-      const data = collectData();
+      // Try multiple CDNs for FileSaver (optional)
+      if(!saverOK()){
+        const saverUrls = [
+          "https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js",
+          "https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"
+        ];
+        for(const url of saverUrls){
+          try { await loadScript(url); if(saverOK()) break; } catch(e) {}
+        }
+      }
+
+      return docxOK();
+    }
+
+    function downloadBlob(blob, filename){
+      if(window.saveAs){
+        window.saveAs(blob, filename);
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // ---------- Fallback export (.doc HTML) ----------
+    function exportAsDocHtml(data){
+      const esc = (s) => String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+      const rows = (data.stakeholderRows || []).filter(r => r.stakeholder || r.wants || r.tension);
+
+      const dateText = data.meta.workDate || new Date().toISOString().slice(0,10);
+      const title = "MMM760 • Week 1 • Template 1 — Stakeholder map (draft)";
+
+      const rowHtml = (rows.length ? rows : [{stakeholder:"—", wants:"—", tension:"—"}]).map(r => `
+        <tr>
+          <td>${esc(r.stakeholder || "—")}</td>
+          <td>${esc(r.wants || "—")}</td>
+          <td>${esc(r.tension || "—")}</td>
+        </tr>
+      `).join("");
+
+      const html =
+`<!doctype html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="utf-8">
+  <title>${esc(title)}</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif; font-size:11pt; color:#1f2a30;}
+    h1{color:#007A78; font-size:18pt; margin:0 0 8pt 0;}
+    h2{font-size:13pt; margin:14pt 0 6pt 0;}
+    p{margin:0 0 8pt 0;}
+    .subtle{color:#5b6b75; font-style:italic;}
+    table{width:100%; border-collapse:collapse; margin:6pt 0 10pt 0;}
+    th{background:#007A78; color:#fff; text-align:left; padding:6pt; font-weight:bold;}
+    td{border:1px solid #d6e1e5; padding:6pt; vertical-align:top;}
+    .label{background:#007A78; color:#fff; font-weight:bold; width:22%;}
+  </style>
+</head>
+<body>
+  <h1>${esc(title)}</h1>
+  <p class="subtle">Keep it short but real. A draft is enough.</p>
+
+  <h2>Business context</h2>
+  <table>
+    <tr><td class="label">Student name</td><td>${esc(data.meta.studentName || "—")}</td><td class="label">Date</td><td>${esc(dateText)}</td></tr>
+    <tr><td class="label">Business name</td><td>${esc(data.business.name || "—")}</td><td class="label">Who it serves</td><td>${esc(data.business.serves || "—")}</td></tr>
+    <tr><td class="label">What it sells (1 sentence)</td><td colspan="3">${esc(data.business.sells || "—")}</td></tr>
+  </table>
+
+  <h2>Stakeholder map</h2>
+  <table>
+    <tr>
+      <th>Stakeholder</th>
+      <th>What they want / care about</th>
+      <th>One tension / risk / trade-off</th>
+    </tr>
+    ${rowHtml}
+  </table>
+
+  <h2>My key tension to discuss in seminar</h2>
+  <p>${esc(data.keyTension || "—")}</p>
+
+  <h2>One question for seminar (optional)</h2>
+  <p>${esc(data.seminarQuestion || "—")}</p>
+
+  <p class="subtle" style="text-align:center; margin-top:14pt;">Generated from MMM760 Week 1 worksheet</p>
+</body>
+</html>`;
+
+      const blob = new Blob(["\ufeff", html], { type: "application/msword" });
+      const safeBiz = (data.business.name || "Business").replace(/[^\w\-]+/g,"_").slice(0,40);
+      downloadBlob(blob, `MMM760_W1_Template1_StakeholderMap_${safeBiz}.doc`);
+    }
+
+    // ---------- Primary export (.docx) ----------
+    async function exportAsDocx(data){
       const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
               Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle } = window.docx;
 
@@ -640,7 +730,6 @@
           spacing: { after: 180 }
         });
       }
-
       function makeSubhead(text){
         return new Paragraph({
           heading: HeadingLevel.HEADING_2,
@@ -648,7 +737,6 @@
           spacing: { before: 120, after: 120 }
         });
       }
-
       function cell(text, { bold=false, fill=null, color=null } = {}){
         return new TableCell({
           children: [ new Paragraph({ children:[ new TextRun({ text: text || "", bold, color: color || "1F2A30", font: arial }) ] }) ],
@@ -656,7 +744,6 @@
           margins: { top: 120, bottom: 120, left: 140, right: 140 },
         });
       }
-
       function borderAll(){
         return {
           top: { style: BorderStyle.SINGLE, size: 1, color: lightBorder },
@@ -704,8 +791,7 @@
         })
       });
 
-      const rowsForDoc = (data.stakeholderRows || [])
-        .filter(r => r.stakeholder || r.wants || r.tension);
+      const rowsForDoc = (data.stakeholderRows || []).filter(r => r.stakeholder || r.wants || r.tension);
 
       const headerRow = new TableRow({
         children: [
@@ -731,34 +817,22 @@
       });
 
       const doc = new Document({
-        styles: {
-          default: {
-            document: {
-              run: { font: arial, size: 22, color: "1F2A30" }
-            }
-          }
-        },
+        styles: { default: { document: { run: { font: arial, size: 22, color: "1F2A30" } } } },
         sections: [{
           children: [
             makeHeader(docTitle),
-
             new Paragraph({
               children:[ new TextRun({ text:"Keep it short but real. A draft is enough.", italics:true, color:"5B6B75", font: arial }) ],
               spacing:{ after: 140 }
             }),
-
             makeSubhead("Business context"),
             detailsTable,
-
             makeSubhead("Stakeholder map"),
             stakeTable,
-
             makeSubhead("My key tension to discuss in seminar"),
             new Paragraph({ children:[ new TextRun({ text: data.keyTension || "—", font: arial }) ] }),
-
             makeSubhead("One question for seminar (optional)"),
             new Paragraph({ children:[ new TextRun({ text: data.seminarQuestion || "—", font: arial }) ] }),
-
             new Paragraph({
               alignment: AlignmentType.CENTER,
               children: [ new TextRun({ text:"Generated from MMM760 Week 1 worksheet", color:"5B6B75", size:18, font: arial }) ]
@@ -768,30 +842,48 @@
       });
 
       const blob = await Packer.toBlob(doc);
-      const filenameSafeBiz = (data.business.name || "Business").replace(/[^\w\-]+/g,"_").slice(0,40);
-      const filename = `MMM760_W1_Template1_StakeholderMap_${filenameSafeBiz}.docx`;
+      const safeBiz = (data.business.name || "Business").replace(/[^\w\-]+/g,"_").slice(0,40);
+      downloadBlob(blob, `MMM760_W1_Template1_StakeholderMap_${safeBiz}.docx`);
+    }
 
-      if(window.saveAs){
-        window.saveAs(blob, filename);
-      } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+    async function exportToWord(){
+      // Heads-up if embedded (common CloudDeakin issue)
+      if(inIframe()){
+        // Not blocking, just warning
+        console.warn("Export may be blocked in an embedded frame. Open in a new tab if needed.");
+      }
+
+      const data = collectData();
+
+      // Try DOCX first
+      const docxReady = await ensureExportLibs();
+      if(docxReady){
+        try{
+          await exportAsDocx(data);
+          return;
+        } catch(e){
+          console.error("DOCX export failed, falling back to .doc HTML.", e);
+        }
+      }
+
+      // Fallback: Word-openable .doc
+      try{
+        exportAsDocHtml(data);
+      } catch(e){
+        alert("Export failed in this view. Please open the worksheet in a new browser tab and try again.");
       }
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      renderStartRows();
+      // Default date today
       const d = new Date();
       $("workDate").value = d.toISOString().slice(0,10);
 
-      ["studentName","workDate","bizName","bizSells","bizServes","keyTension","seminarQuestion"].forEach(id => {
-        $(id).addEventListener("input", updateBadges);
-      });
+      // Start with blank rows
+      renderStartRows();
+
+      ["studentName","workDate","bizName","bizSells","bizServes","keyTension","seminarQuestion"]
+        .forEach(id => $(id).addEventListener("input", updateBadges));
 
       $("addRowBtn").addEventListener("click", addRow);
       $("resetBtn").addEventListener("click", resetAll);
