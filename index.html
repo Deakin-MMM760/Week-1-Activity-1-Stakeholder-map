@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MMM760 | Week 1 | Activity 1 — Stakeholder map</title>
+  <title>MMM760 | Week 1 | Template 1 — Stakeholder map</title>
 
   <!-- DOCX export libraries (client-side) -->
   <script defer src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
@@ -37,9 +37,6 @@
       background:linear-gradient(180deg, var(--dk-soft) 0%, var(--dk-bg) 25%, var(--dk-bg) 100%);
       line-height:1.55;
     }
-
-    a{color:var(--dk-teal); text-decoration:none}
-    a:hover{text-decoration:underline}
 
     .topbar{
       background:linear-gradient(90deg, var(--dk-teal) 0%, var(--dk-teal-dark) 100%);
@@ -97,6 +94,7 @@
       gap:8px;
       align-items:center;
       white-space:nowrap;
+      text-decoration:none;
     }
 
     .wrap{
@@ -136,16 +134,7 @@
 
     .muted{color:var(--dk-muted)}
     .small{font-size:0.92rem}
-
-    .notice{
-      background:#fff;
-      border:1px solid var(--dk-border);
-      border-left:6px solid var(--dk-teal);
-      border-radius:14px;
-      padding:12px 12px;
-    }
-
-    .notice strong{color:var(--dk-teal-dark)}
+    .tiny{font-size:0.82rem; color:var(--dk-muted)}
 
     .fields{
       display:grid;
@@ -177,6 +166,12 @@
     input:focus, textarea:focus{
       border-color: rgba(0,122,120,0.55);
       box-shadow: 0 0 0 4px rgba(0,122,120,0.12);
+    }
+
+    .divider{
+      height:1px;
+      background:var(--dk-border);
+      margin:14px 0;
     }
 
     .table-wrap{
@@ -255,7 +250,7 @@
     .btn-ghost:hover{background:rgba(0,122,120,0.06)}
     .btn-danger{
       background:#fff;
-      color:var(--dk-warn);
+      color:#b42318;
       border:1px solid rgba(180,35,24,0.25);
     }
     .btn-danger:hover{background:rgba(180,35,24,0.05)}
@@ -266,11 +261,6 @@
       gap:12px;
     }
 
-    .status{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
     .badge{
       display:inline-flex;
       align-items:center;
@@ -312,17 +302,6 @@
       color:var(--dk-muted);
     }
 
-    .divider{
-      height:1px;
-      background:var(--dk-border);
-      margin:14px 0;
-    }
-
-    .tiny{
-      font-size:0.82rem;
-      color:var(--dk-muted);
-    }
-
     .kbd{
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:0.85rem;
@@ -339,11 +318,10 @@
     <div class="topbar-inner">
       <div class="brand">
         <div class="kicker">MMM760 Small Business Management</div>
-        <h1>Week 1 • Activity 1 — Stakeholder map (draft)</h1>
+        <h1>Week 1 • Template 1 — Stakeholder map (draft)</h1>
       </div>
 
       <div class="top-actions">
-        <div class="pill" id="savePill" aria-live="polite">Not saved yet</div>
         <a class="pill" href="javascript:window.print()" title="Print / Save as PDF">Print / Save as PDF</a>
       </div>
     </div>
@@ -354,18 +332,21 @@
       <!-- Main form -->
       <section class="card" aria-label="Worksheet">
         <h2>What you’re producing</h2>
-        <p class="muted small">
+        <p class="muted small" style="margin-bottom:6px;">
           A usable draft you can bring to seminar: <strong>8+ stakeholders</strong> for one small business and
           <strong>one key tension</strong> (trade-off) to discuss.
         </p>
-
-        <div class="notice">
-          <strong>Important:</strong> This worksheet saves your work <em>on this device</em>. Export to Word before class.
-        </div>
+        <p class="tiny" style="margin-top:0;">
+          In seminar you’ll refine this with your group and strengthen it (add a missing stakeholder and sharpen your tension).
+        </p>
 
         <div class="divider"></div>
 
         <h3>Step 1 — Choose your business</h3>
+        <p class="muted small" style="margin-top:-4px;">
+          If you’re stuck, use the fallback scenario: <span class="kbd">Neighbourhood Café</span>.
+        </p>
+
         <div class="fields">
           <div>
             <label for="studentName">Student name (optional)</label>
@@ -416,9 +397,7 @@
                 <th style="width:8%; text-align:right;">Action</th>
               </tr>
             </thead>
-            <tbody id="stakeTbody">
-              <!-- Rows inserted by JS -->
-            </tbody>
+            <tbody id="stakeTbody"></tbody>
           </table>
         </div>
 
@@ -430,6 +409,12 @@
 
         <div class="divider"></div>
 
+        <h3>Step 4 — One question for seminar (optional, but recommended)</h3>
+        <label for="seminarQuestion" class="muted">What’s one thing you want clarified in class?</label>
+        <textarea id="seminarQuestion" placeholder="One question I want answered in seminar is…"></textarea>
+
+        <div class="divider"></div>
+
         <h3>Quick self-check</h3>
         <p class="muted small">
           Before you export: do you have <strong>8+ stakeholders</strong>, and does your tension read like a true trade-off?
@@ -437,13 +422,15 @@
 
       </section>
 
-      <!-- Right column: status + tips -->
+      <!-- Right column -->
       <aside class="right-stack">
-        <section class="card status" aria-label="Progress">
+        <section class="card" aria-label="Progress">
           <h2 style="margin-bottom:6px;">Progress</h2>
           <div id="stakeCountBadge" class="badge warn">Stakeholders: 0 (need 8+)</div>
           <div id="tensionBadge" class="badge warn">Key tension: not yet added</div>
-          <div class="tiny" id="lastSavedTxt">Last saved: —</div>
+          <p class="tiny" style="margin:10px 0 0 0;">
+            Tip: export to Word before you close this page (drafts aren’t saved).
+          </p>
         </section>
 
         <section class="card" aria-label="Tips">
@@ -458,21 +445,20 @@
         <section class="card" aria-label="Support">
           <h2 style="margin-bottom:6px;">If your browser blocks downloads</h2>
           <p class="muted small" style="margin:0;">
-            Use <strong>Print / Save as PDF</strong> in the top bar as a fallback. Then bring the PDF to class.
+            Use <strong>Print / Save as PDF</strong> in the top bar as a fallback.
           </p>
         </section>
       </aside>
     </div>
   </main>
 
-  <!-- Sticky footer with required Export to Word button -->
+  <!-- Sticky footer: Reset + Export only -->
   <footer class="sticky-footer">
     <div class="sticky-inner">
       <div class="footer-left">
-        <span class="hint">Autosave is on. Export before class.</span>
+        <span class="hint">Drafts aren’t saved here. Export to Word before you close.</span>
       </div>
       <div class="footer-right">
-        <button class="btn btn-ghost" id="saveBtn" type="button">Save now</button>
         <button class="btn btn-danger" id="resetBtn" type="button">Reset</button>
         <button class="btn btn-primary" id="exportBtn" type="button">Export to Word (.docx)</button>
       </div>
@@ -481,8 +467,6 @@
 
   <script>
     // ---------- Config ----------
-    const STORAGE_KEY = "MMM760_W1_A1_STAKEHOLDERS_v1";
-
     const DEFAULT_ROWS = [
       "Customers",
       "Staff / contractors",
@@ -497,24 +481,20 @@
     // ---------- Helpers ----------
     const $ = (id) => document.getElementById(id);
 
-    function nowStamp(){
-      const d = new Date();
-      return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
-    }
-
     function safeText(v){
       return (v ?? "").toString().trim();
     }
 
-    function debounce(fn, delay=400){
-      let t;
-      return (...args) => {
-        clearTimeout(t);
-        t = setTimeout(() => fn(...args), delay);
-      };
+    // ---------- Row rendering ----------
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
 
-    // ---------- Row rendering ----------
     function makeRow({ stakeholder="", wants="", tension="" } = {}){
       const tr = document.createElement("tr");
 
@@ -538,14 +518,10 @@
       tr.querySelector('[data-action="delete"]').addEventListener("click", () => {
         tr.remove();
         updateBadges();
-        scheduleSave();
       });
 
       tr.querySelectorAll("input, textarea").forEach(el => {
-        el.addEventListener("input", () => {
-          updateBadges();
-          scheduleSave();
-        });
+        el.addEventListener("input", () => updateBadges());
       });
 
       return tr;
@@ -558,31 +534,21 @@
       updateBadges();
     }
 
-    function escapeHtml(str){
-      return String(str ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    // ---------- Collect / load ----------
+    // ---------- Collect ----------
     function collectData(){
       const rows = [];
       $("stakeTbody").querySelectorAll("tr").forEach(tr => {
-        const stakeholder = tr.querySelector('[data-field="stakeholder"]').value;
-        const wants = tr.querySelector('[data-field="wants"]').value;
-        const tension = tr.querySelector('[data-field="tension"]').value;
-        // Keep rows even if partially blank (student may be drafting)
-        rows.push({ stakeholder:safeText(stakeholder), wants:safeText(wants), tension:safeText(tension) });
+        rows.push({
+          stakeholder: safeText(tr.querySelector('[data-field="stakeholder"]').value),
+          wants: safeText(tr.querySelector('[data-field="wants"]').value),
+          tension: safeText(tr.querySelector('[data-field="tension"]').value),
+        });
       });
 
       return {
         meta: {
           studentName: safeText($("studentName").value),
           workDate: $("workDate").value || "",
-          savedAt: new Date().toISOString()
         },
         business: {
           name: safeText($("bizName").value),
@@ -590,67 +556,15 @@
           serves: safeText($("bizServes").value)
         },
         stakeholderRows: rows,
-        keyTension: safeText($("keyTension").value)
+        keyTension: safeText($("keyTension").value),
+        seminarQuestion: safeText($("seminarQuestion").value)
       };
-    }
-
-    function loadData(data){
-      $("studentName").value = data?.meta?.studentName || "";
-      $("workDate").value = data?.meta?.workDate || "";
-      $("bizName").value = data?.business?.name || "";
-      $("bizSells").value = data?.business?.sells || "";
-      $("bizServes").value = data?.business?.serves || "";
-      $("keyTension").value = data?.keyTension || "";
-
-      const tbody = $("stakeTbody");
-      tbody.innerHTML = "";
-      const rows = data?.stakeholderRows?.length ? data.stakeholderRows : DEFAULT_ROWS.map(s => ({stakeholder:s, wants:"", tension:""}));
-      rows.forEach(r => tbody.appendChild(makeRow(r)));
-
-      updateBadges();
-    }
-
-    // ---------- Save / autosave ----------
-    function setSavePill(text){
-      $("savePill").textContent = text;
-    }
-
-    function saveNow(){
-      const data = collectData();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      const stamp = nowStamp();
-      setSavePill("Saved • " + stamp);
-      $("lastSavedTxt").textContent = "Last saved: " + stamp;
-    }
-
-    const scheduleSave = debounce(saveNow, 450);
-
-    function tryRestore(){
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw){
-        renderDefaultRows();
-        // Default date today
-        const d = new Date();
-        $("workDate").value = d.toISOString().slice(0,10);
-        return;
-      }
-      try{
-        const data = JSON.parse(raw);
-        loadData(data);
-        setSavePill("Restored • ready");
-        if(data?.meta?.savedAt){
-          $("lastSavedTxt").textContent = "Last saved: " + new Date(data.meta.savedAt).toLocaleString();
-        }
-      } catch(e){
-        renderDefaultRows();
-      }
     }
 
     // ---------- Badges ----------
     function updateBadges(){
-      const rows = collectData().stakeholderRows || [];
-      // Count rows that have a stakeholder label (not empty)
-      const count = rows.filter(r => safeText(r.stakeholder).length > 0).length;
+      const data = collectData();
+      const count = (data.stakeholderRows || []).filter(r => safeText(r.stakeholder).length > 0).length;
 
       const stakeBadge = $("stakeCountBadge");
       if(count >= 8){
@@ -674,7 +588,7 @@
 
     // ---------- Optional starter text ----------
     function loadCafeStarter(){
-      if(!confirm("Load a simple café starter example into the table? This won’t overwrite stakeholder names, only adds draft notes where blank.")) return;
+      if(!confirm("Load a simple café starter example? This won’t overwrite stakeholder names, only adds draft notes where blank.")) return;
 
       $("bizName").value = $("bizName").value || "Neighbourhood Café";
       $("bizSells").value = $("bizSells").value || "Coffee, simple meals, takeaway (plus optional delivery)";
@@ -704,7 +618,6 @@
 
       $("keyTension").value = $("keyTension").value || "Adding delivery may increase sales, but can reduce margins and increase staff pressure.";
       updateBadges();
-      scheduleSave();
     }
 
     // ---------- Export to Word (DOCX) ----------
@@ -720,16 +633,6 @@
 
       const tealFill = "007A78";
       const lightBorder = "D6E1E5";
-
-      function p(text, opts={}){
-        return new Paragraph({
-          children: [ new TextRun({ text, ...opts }) ],
-        });
-      }
-
-      function spacer(lines=1){
-        return new Paragraph({ children:[new TextRun({ text:"" })], spacing:{ after: lines*120 } });
-      }
 
       function makeHeader(text){
         return new Paragraph({
@@ -764,10 +667,9 @@
         };
       }
 
-      const docTitle = "MMM760 • Week 1 • Activity 1 — Stakeholder map (draft)";
+      const docTitle = "MMM760 • Week 1 • Template 1 — Stakeholder map (draft)";
       const dateText = data.meta.workDate ? data.meta.workDate : new Date().toISOString().slice(0,10);
 
-      // Student + business details table
       const detailsTable = new Table({
         width: { size: 100, type: WidthType.PERCENTAGE },
         rows: [
@@ -803,7 +705,6 @@
         })
       });
 
-      // Stakeholder map table
       const headerRow = new TableRow({
         children: [
           cell("Stakeholder", { bold:true, fill: tealFill, color:"FFFFFF" }),
@@ -830,25 +731,22 @@
 
       const doc = new Document({
         sections: [{
-          properties: {},
           children: [
             makeHeader(docTitle),
-
-            p("This is a draft worksheet for seminar preparation. Keep it short, specific, and usable.", { italics:true, color:"5B6B75" }),
-            spacer(1),
+            new Paragraph({ children:[ new TextRun({ text:"Keep it short but real. A draft is enough.", italics:true, color:"5B6B75" }) ] }),
 
             makeSubhead("Business context"),
             detailsTable,
-            spacer(1),
 
             makeSubhead("Stakeholder map"),
             stakeTable,
-            spacer(1),
 
             makeSubhead("My key tension to discuss in seminar"),
             new Paragraph({ children:[ new TextRun({ text: data.keyTension || "—" }) ] }),
 
-            spacer(1),
+            makeSubhead("One question for seminar (optional)"),
+            new Paragraph({ children:[ new TextRun({ text: data.seminarQuestion || "—" }) ] }),
+
             new Paragraph({
               alignment: AlignmentType.CENTER,
               children: [ new TextRun({ text:"Generated from MMM760 Week 1 worksheet", color:"5B6B75", size:18 }) ]
@@ -859,9 +757,8 @@
 
       const blob = await Packer.toBlob(doc);
       const filenameSafeBiz = (data.business.name || "Business").replace(/[^\w\-]+/g,"_").slice(0,40);
-      const filename = `MMM760_W1_A1_StakeholderMap_${filenameSafeBiz}.docx`;
+      const filename = `MMM760_W1_Template1_StakeholderMap_${filenameSafeBiz}.docx`;
 
-      // file-saver preferred
       if(window.saveAs){
         window.saveAs(blob, filename);
       } else {
@@ -876,45 +773,43 @@
     }
 
     // ---------- Wire up ----------
-    function bindAutosave(){
-      ["studentName","workDate","bizName","bizSells","bizServes","keyTension"].forEach(id => {
-        $(id).addEventListener("input", () => { updateBadges(); scheduleSave(); });
+    function bindInputsForBadges(){
+      ["studentName","workDate","bizName","bizSells","bizServes","keyTension","seminarQuestion"].forEach(id => {
+        $(id).addEventListener("input", updateBadges);
       });
     }
 
     function addRow(){
       $("stakeTbody").appendChild(makeRow({}));
       updateBadges();
-      scheduleSave();
     }
 
     function resetAll(){
-      if(!confirm("Reset this worksheet? This clears the saved draft on this device.")) return;
-      localStorage.removeItem(STORAGE_KEY);
+      if(!confirm("Reset this worksheet? This clears everything on the page.")) return;
       $("studentName").value = "";
       $("bizName").value = "";
       $("bizSells").value = "";
       $("bizServes").value = "";
       $("keyTension").value = "";
+      $("seminarQuestion").value = "";
       const d = new Date();
       $("workDate").value = d.toISOString().slice(0,10);
       renderDefaultRows();
-      setSavePill("Reset • not saved");
-      $("lastSavedTxt").textContent = "Last saved: —";
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      tryRestore();
-      bindAutosave();
+      renderDefaultRows();
+      const d = new Date();
+      $("workDate").value = d.toISOString().slice(0,10);
+
+      bindInputsForBadges();
 
       $("addRowBtn").addEventListener("click", addRow);
-      $("saveBtn").addEventListener("click", saveNow);
       $("resetBtn").addEventListener("click", resetAll);
       $("exportBtn").addEventListener("click", exportToWord);
       $("loadExampleBtn").addEventListener("click", loadCafeStarter);
 
-      // First save pill state (after restore)
-      setTimeout(() => updateBadges(), 50);
+      updateBadges();
     });
   </script>
 </body>
